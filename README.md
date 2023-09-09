@@ -10,7 +10,7 @@ In the mobile applications industry, marketing (better known as User Acquisition
 
 <br>
 
-*Disclaimer*: *This is a summary of my analysis, findings, and recommendations. The full analysis can be found [here](prompt.ipynb).*
+*Disclaimer*: *This is a summary of my analysis, findings, and recommendations. Details on the initial analysis can be found [here](prompt_phase1.ipynb).*
 
 ### Business Understanding
 
@@ -90,7 +90,7 @@ After doing some research and talking to subject-matter experts, I identified th
 Features:
 
 - **date**: the date of the record.
-- **network_name**: rhe name of a promotion channel.
+- **network_name**: the name of a promotion channel.
 - **region**: geographical region.
 - **d0_paid_revenue**: revenue generated the day users installed the app on a given date.
 - **d7_paid_revenue**: revenue generated in the first `7 days` after users installed the app on a given date.
@@ -98,7 +98,9 @@ Features:
 - ...
 - **d360_paid_revenue**: revenue generated in the first `360 days` after users installed the app on a given date.
 
-*This new dataset has data only for "App T (android)" since the apps behave differently from each other (individual models for each sku need to be generated). Having said that, all the channels and regions for this specific app will be used for modeling.*
+This new dataset has data only for "App T (android)" since the apps behave differently from each other (individual models for each sku need to be generated). Having said that, all the channels and regions for this specific app will be used for modeling.
+
+*Disclaimer*: *The details of the new data structure and modeling can be found [here](prompt_phase2.ipynb).*
 
 
 ### Analyzing new data structure
@@ -137,7 +139,7 @@ Just some of the data will be used to train the model. A portion of the data (30
 
 #### 2. Model design
 
-All models will be Linear Regresion models given the caracteristics of the data and expected results. Details on how these models were optimized can be found [here](prompt.ipynb).
+All models will be Linear Regresion models given the caracteristics of the data and expected results. Details on how these models were optimized can be found [here](prompt_phase2.ipynb).
 
 #### 3. Model results
 
@@ -204,18 +206,29 @@ The models can also be used to analyze each cohort individually. This can be don
 $\color{red}{Conclusion}$
 The "Paid Revenue" predictions are consistently good across the different cohorts. The "Organic Revenue" predictions, however, drop in accuracy around the cohort D60 impacting the D90 - D360 predictions. This is something that needs to be addressed in the future.
 
-## VI. Next Steps & Recommendations
+## Alternatives to Improve Organic Revenue Predictions
 
-### Recommendations
+### Neural Networks for Regression (NNR)
 
-**Analyze each model coeficients**: The coeficients can give really good insights on how the different channels and regions perform on each specific cohort (D14, D30, D60,etc). This can be used to optimize marketing campaings and evaluate each channel individually. 
 
-**Evaluate each channel using the models**: The models can be used to find a baseline for each channel. This baseline can be used to evaluate the performance of new potential channels. If the new channel performs better than the baseline, then it can be considered a good channel to invest in.
+A radical approach using deep learning was tested. The idea was to use a Neural Network for Regression (NNR) to predict the organic revenue. The features being used to train it are the following:
 
-### Next Steps
+- **network_name**
+- **region**
+- **d0_paid_revenue**
+- **d0_organic_revenue**
+- **d7_paid_revenue**
+- **d7_organic_revenue**
 
-**Organic Modelings fine-tunning**: Seems like some organic models need more work since they are not as accurate as the paid models affecting the accuracy of the organic D360 revenue inidicator.
+*Details on the NNR implementation can be found [here](prompt_phase3.ipynb)*
 
-**Explore other approaches on organic prediction**: Organic revenue is currently attributed to the different paid channels. This is not ideal since it's not possible to know the real impact of each channel. It would be interesting to treat organic revenue as a separate channel and try to predict it.
 
-**Rollout to other applications**: The models can be used to predict revenue for other applications with similar behaviour. This can be done by using the same models and just changing the input data. For example, the models can be used to predict revenue for a specific region or for a specific network.
+### Results
+
+**The results are pretty good and promising**: The NNR scored a MAE of `19.519001007080078` on the test dataset.
+
+<img src="images/readme_8.png" width="100%">
+
+## Next Steps
+
+Deploy the NNR model to production and use it to predict organic revenue and if the results are consistently good, start rolling out similar solutions for the other applications in the portfolio.
